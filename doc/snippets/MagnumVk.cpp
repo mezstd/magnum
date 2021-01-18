@@ -228,6 +228,26 @@ buffer.bindMemory(memory, 0);
 }
 
 {
+Vk::Device device{NoCreate};
+Vk::CommandBuffer cmd{NoCreate};
+UnsignedLong size{};
+/* [Buffer-usage-copy] */
+Vk::Buffer source{device, Vk::BufferCreateInfo{
+    Vk::BufferUsage::TransferSource, size},
+    Vk::MemoryFlag::HostVisible};
+Vk::Buffer destination{device, Vk::BufferCreateInfo{
+    Vk::BufferUsage::TransferDestination|DOXYGEN_IGNORE(Vk::BufferUsage{}), size},
+    Vk::MemoryFlag::DeviceLocal};
+
+DOXYGEN_IGNORE()
+
+cmd.copyBuffer({source, destination, {
+    {0, 0, size} /* Copy the whole buffer */
+}});
+/* [Buffer-usage-copy] */
+}
+
+{
 /* The include should be a no-op here since it was already included above */
 /* [CommandPool-creation] */
 #include <Magnum/Vk/CommandPoolCreateInfo.h>
@@ -467,6 +487,37 @@ Vk::Memory memory{device, Vk::MemoryAllocateInfo{
 
 image.bindMemory(memory, 0);
 /* [Image-creation-custom-allocation] */
+}
+
+{
+Vk::Device device{NoCreate};
+Vk::CommandBuffer cmd{NoCreate};
+/* [Image-usage-copy] */
+Vk::Buffer source{device, Vk::BufferCreateInfo{
+    Vk::BufferUsage::TransferSource, 256*256*4},
+    Vk::MemoryFlag::HostVisible};
+Vk::Image destination{device, Vk::ImageCreateInfo2D{
+    Vk::ImageUsage::TransferDestination|DOXYGEN_IGNORE(Vk::ImageUsage{}), Vk::PixelFormat::RGBA8Srgb, {256, 256}, DOXYGEN_IGNORE(1)},
+    Vk::MemoryFlag::DeviceLocal};
+
+DOXYGEN_IGNORE()
+
+cmd.copyBufferToImage({source, destination, Vk::ImageLayout::Undefined, {
+    /* Copy the whole buffer to the first level of the image */
+    Vk::BufferImageCopy2D{0, Vk::ImageAspect::Color, 0, {{}, {256, 256}}}
+}});
+/* [Image-usage-copy] */
+
+/* [Image-usage-copy-multiple] */
+cmd.copyBufferToImage(Vk::CopyBufferToImageInfo2D{
+    source, destination, Vk::ImageLayout::Undefined, {
+        {     0, Vk::ImageAspect::Color, 0, {{}, {256, 256}}},
+        {262144, Vk::ImageAspect::Color, 1, {{}, {128, 128}}},
+        {327680, Vk::ImageAspect::Color, 2, {{}, { 64,  64}}},
+        DOXYGEN_IGNORE()
+    }
+});
+/* [Image-usage-copy-multiple] */
 }
 
 {

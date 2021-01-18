@@ -355,6 +355,58 @@ class MAGNUM_VK_EXPORT CommandBuffer {
         CommandBuffer& endRenderPass();
         #endif
 
+        /**
+         * @brief Copy data between buffer regions
+         * @return Reference to self (for method chaining)
+         *
+         * If the @vk_extension{KHR,copy_commands2} extension is not supported
+         * and enabled on the device, the `pNext` chain in @p info and its
+         * substructures is ignored. See @ref Vk-Buffer-usage-copy for details
+         * and usage examples.
+         * @see @fn_vk_keyword{CmdCopyBuffer2KHR},
+         *      @fn_vk_keyword{CmdCopyBuffer}
+         */
+        CommandBuffer& copyBuffer(const CopyBufferInfo& info);
+
+        /**
+         * @brief Copy data between images
+         * @return Reference to self (for method chaining)
+         *
+         * If the @vk_extension{KHR,copy_commands2} extension is not supported
+         * and enabled on the device, the `pNext` chain in @p info and its
+         * substructures is ignored. See @ref Vk-Image-usage-copy for details
+         * and usage examples.
+         * @see @fn_vk_keyword{CmdCopyImage2KHR},
+         *      @fn_vk_keyword{CmdCopyImage}
+         */
+        CommandBuffer& copyImage(const CopyImageInfo& info);
+
+        /**
+         * @brief Copy data from a buffer into an image
+         * @return Reference to self (for method chaining)
+         *
+         * If the @vk_extension{KHR,copy_commands2} extension is not supported
+         * and enabled on the device, the `pNext` chain in @p info and its
+         * substructures is ignored. See @ref Vk-Image-usage-copy for details
+         * and usage examples.
+         * @see @fn_vk_keyword{CmdCopyBufferToImage2KHR},
+         *      @fn_vk_keyword{CmdCopyBufferToImage}
+         */
+        CommandBuffer& copyBufferToImage(const CopyBufferToImageInfo& info);
+
+        /**
+         * @brief Copy image data into a buffer
+         * @return Reference to self (for method chaining)
+         *
+         * If the @vk_extension{KHR,copy_commands2} extension is not supported
+         * and enabled on the device, the `pNext` chain in @p info and its
+         * substructures is ignored. See @ref Vk-Image-usage-copy for details
+         * and usage examples.
+         * @see @fn_vk_keyword{CmdCopyImageToBuffer2KHR},
+         *      @fn_vk_keyword{CmdCopyImageToBuffer}
+         */
+        CommandBuffer& copyImageToBuffer(const CopyImageToBufferInfo& info);
+
     private:
         friend CommandPool;
         friend Implementation::DeviceState;
@@ -370,6 +422,18 @@ class MAGNUM_VK_EXPORT CommandBuffer {
         MAGNUM_VK_LOCAL static void endRenderPassImplementationDefault(CommandBuffer& self, const VkSubpassEndInfo& endInfo);
         MAGNUM_VK_LOCAL static void endRenderPassImplementationKHR(CommandBuffer& self, const VkSubpassEndInfo& endInfo);
         MAGNUM_VK_LOCAL static void endRenderPassImplementation12(CommandBuffer& self, const VkSubpassEndInfo& endInfo);
+
+        MAGNUM_VK_LOCAL static void copyBufferImplementationDefault(CommandBuffer& self, const CopyBufferInfo& info);
+        MAGNUM_VK_LOCAL static void copyBufferImplementationKHR(CommandBuffer& self, const CopyBufferInfo& info);
+
+        MAGNUM_VK_LOCAL static void copyImageImplementationDefault(CommandBuffer& self, const CopyImageInfo& info);
+        MAGNUM_VK_LOCAL static void copyImageImplementationKHR(CommandBuffer& self, const CopyImageInfo& info);
+
+        MAGNUM_VK_LOCAL static void copyBufferToImageImplementationDefault(CommandBuffer& self, const CopyBufferToImageInfo& info);
+        MAGNUM_VK_LOCAL static void copyBufferToImageImplementationKHR(CommandBuffer& self, const CopyBufferToImageInfo& info);
+
+        MAGNUM_VK_LOCAL static void copyImageToBufferImplementationDefault(CommandBuffer& self, const CopyImageToBufferInfo& info);
+        MAGNUM_VK_LOCAL static void copyImageToBufferImplementationKHR(CommandBuffer& self, const CopyImageToBufferInfo& info);
 
         /* Can't be a reference because of the NoCreate constructor */
         Device* _device;
